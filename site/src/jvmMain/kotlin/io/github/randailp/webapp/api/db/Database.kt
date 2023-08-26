@@ -8,11 +8,11 @@ import java.sql.DriverManager
 import java.sql.SQLException
 
 class Database {
-
     private val jdbcUrl: String = System.getenv("JDBC_URL")
     private val dbPass: String = System.getenv("DB_PASS")
     private val dbUser: String = System.getenv("DB_USER")
     fun getBlogs(): List<Blog> {
+        Class.forName("org.postgresql.Driver")
         val connect = DriverManager.getConnection(jdbcUrl, dbUser, dbPass)
         val mutableList = mutableListOf<Blog>()
         try {
@@ -35,6 +35,7 @@ class Database {
     }
 
     fun addBlog(blog: Blog) {
+        Class.forName("org.postgresql.Driver")
         val connect = DriverManager.getConnection(jdbcUrl, dbUser, dbPass)
         try {
             val updateSQL = "UPDATE Blogs " +
