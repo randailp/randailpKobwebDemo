@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.kobweb.application)
     alias(libs.plugins.kobwebx.markdown)
+    alias(libs.plugins.serialization.plugin)
 }
 
 group = "io.github.randailp.webapp"
@@ -26,6 +27,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(compose.runtime)
+                implementation(libs.kotlinx.serialization)
             }
         }
 
@@ -42,6 +44,7 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation(libs.kobweb.api)
+                implementation("org.postgresql:postgresql:42.3.1")
             }
         }
     }

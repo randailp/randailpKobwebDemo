@@ -61,6 +61,7 @@ fun NavHeader() {
             NavLink("/links", "LINKS" )
             NavLink("/about", "ABOUT")
             NavLink("/markdown", "MARKDOWN")
+            NavLink("/blogs", "BLOGS")
             Spacer()
 
             Button(
