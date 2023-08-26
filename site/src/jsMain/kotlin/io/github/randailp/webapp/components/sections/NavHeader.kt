@@ -58,6 +58,7 @@ fun NavHeader() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             NavLink("/", "HOME")
+            NavLink("/links", "LINKS" )
             NavLink("/about", "ABOUT")
             NavLink("/markdown", "MARKDOWN")
             Spacer()
