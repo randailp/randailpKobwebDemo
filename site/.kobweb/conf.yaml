@@ -12,7 +12,7 @@ server:
       siteRoot: ".kobweb/site"
   cors:
     hosts:
-      - name: "kobweb-demo.onrender.com"
+      - name: "kobweb-demo-9q38.onrender.com"
         schemes:
           - "https"
   port: 8080
