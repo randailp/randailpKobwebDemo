@@ -10,5 +10,9 @@ server:
     prod:
       script: "build/distributions/webapp.js"
       siteRoot: ".kobweb/site"
-
+  cors:
+    hosts:
+      - name: "kobweb-demo.onrender.com"
+        schemes:
+          - "https"
   port: 8080
