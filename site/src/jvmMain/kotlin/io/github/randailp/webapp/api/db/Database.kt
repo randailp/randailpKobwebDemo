@@ -9,7 +9,7 @@ import java.sql.SQLException
 
 class Database {
 
-    private val jdbcUrl: String = System.getenv("JDCB_URL")
+    private val jdbcUrl: String = System.getenv("JDBC_URL")
     private val dbPass: String = System.getenv("DB_PASS")
     private val dbUser: String = System.getenv("DB_USER")
     fun getBlogs(): List<Blog> {
