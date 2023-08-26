@@ -1,0 +1,14 @@
+site:
+  title: "WebApp"
+
+server:
+  files:
+    dev:
+      contentRoot: "build/processedResources/js/main/public"
+      script: "build/developmentExecutable/webapp.js"
+      api: "build/libs/webapp.jar"
+    prod:
+      script: "build/distributions/webapp.js"
+      siteRoot: ".kobweb/site"
+
+  port: 8080
