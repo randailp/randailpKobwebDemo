@@ -6,8 +6,9 @@ import com.varabyte.kobweb.api.init.InitApi
 import com.varabyte.kobweb.api.init.InitApiContext
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import java.sql.DriverManager
+import org.postgresql.Driver
 import java.sql.SQLException
+
 
 class Database {
 
@@ -20,10 +21,9 @@ class Database {
         hikariConfig.jdbcUrl = jdbcUrl
         hikariConfig.username = dbUser
         hikariConfig.password = dbPass
+        hikariConfig.setDriverClassName(Driver::class.java.getName())
 
         val dataSource = HikariDataSource(hikariConfig)
-
-        Class.forName("org.postgresql.Driver")
         val connect = dataSource.connection
         val mutableList = mutableListOf<Blog>()
         try {
@@ -49,9 +49,9 @@ class Database {
         hikariConfig.jdbcUrl = jdbcUrl
         hikariConfig.username = dbUser
         hikariConfig.password = dbPass
+        hikariConfig.setDriverClassName(Driver::class.java.getName())
 
         val dataSource = HikariDataSource(hikariConfig)
-        Class.forName("org.postgresql.Driver")
         val connect = dataSource.connection
         try {
             val updateSQL = "UPDATE Blogs " +
