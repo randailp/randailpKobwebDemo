@@ -4,16 +4,24 @@ import Blog
 import com.varabyte.kobweb.api.data.add
 import com.varabyte.kobweb.api.init.InitApi
 import com.varabyte.kobweb.api.init.InitApiContext
+import com.zaxxer.hikari.HikariDataSource
 import java.sql.DriverManager
 import java.sql.SQLException
 
 class Database {
+
     private val jdbcUrl: String = System.getenv("JDBC_URL")
     private val dbPass: String = System.getenv("DB_PASS")
     private val dbUser: String = System.getenv("DB_USER")
+
+    private val dataSource = HikariDataSource()
+
     fun getBlogs(): List<Blog> {
+        dataSource.jdbcUrl = jdbcUrl
+        dataSource.username = dbUser
+        dataSource.password = dbPass
         Class.forName("org.postgresql.Driver")
-        val connect = DriverManager.getConnection(jdbcUrl, dbUser, dbPass)
+        val connect = dataSource.connection
         val mutableList = mutableListOf<Blog>()
         try {
             val st = connect.createStatement()
@@ -35,8 +43,11 @@ class Database {
     }
 
     fun addBlog(blog: Blog) {
+        dataSource.jdbcUrl = jdbcUrl
+        dataSource.username = dbUser
+        dataSource.password = dbPass
         Class.forName("org.postgresql.Driver")
-        val connect = DriverManager.getConnection(jdbcUrl, dbUser, dbPass)
+        val connect = dataSource.connection
         try {
             val updateSQL = "UPDATE Blogs " +
                     "SET content = ${blog.content} " +

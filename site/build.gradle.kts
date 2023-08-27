@@ -45,6 +45,7 @@ kotlin {
             dependencies {
                 implementation(libs.kobweb.api)
                 implementation("org.postgresql:postgresql:42.3.1")
+                implementation ("com.zaxxer:HikariCP:5.0.0")
             }
         }
     }
