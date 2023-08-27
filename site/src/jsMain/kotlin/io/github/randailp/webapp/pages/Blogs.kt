@@ -5,6 +5,7 @@ import androidx.compose.runtime.*
 import com.varabyte.kobweb.browser.api
 import com.varabyte.kobweb.compose.foundation.layout.Column
 import com.varabyte.kobweb.compose.ui.Modifier
+import com.varabyte.kobweb.compose.ui.modifiers.id
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
 import com.varabyte.kobweb.compose.ui.toAttrs
 import com.varabyte.kobweb.core.Page
@@ -34,7 +35,7 @@ fun BlogsPage() {
             )
             Input(
                 type = InputType.Number,
-                attrs = Modifier.toAttrs {
+                attrs = Modifier.id("id").toAttrs {
                     attr("placeholder", "Enter text")
                 }
             )
@@ -55,6 +56,7 @@ fun BlogsPage() {
 
 private suspend fun fetchBlogs() : ApiResponse {
     val inputText = (document.getElementById("id") as HTMLInputElement).value
-    val result = window.api.tryGet(apiPath = "getblogs?id=$inputText")?.decodeToString()
+    val number = if(inputText.isEmpty()) 0 else inputText.toInt()
+    val result = window.api.tryGet(apiPath = "getblogs?id=$number")?.decodeToString()
     return Json.decodeFromString(string = result.toString())
 }
