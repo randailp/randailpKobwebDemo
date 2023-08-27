@@ -4,6 +4,7 @@ import Blog
 import com.varabyte.kobweb.api.data.add
 import com.varabyte.kobweb.api.init.InitApi
 import com.varabyte.kobweb.api.init.InitApiContext
+import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import java.sql.DriverManager
 import java.sql.SQLException
@@ -14,12 +15,14 @@ class Database {
     private val dbPass: String = System.getenv("DB_PASS")
     private val dbUser: String = System.getenv("DB_USER")
 
-    private val dataSource = HikariDataSource()
-
+    private val hikariConfig = HikariConfig()
     fun getBlogs(): List<Blog> {
-        dataSource.jdbcUrl = jdbcUrl
-        dataSource.username = dbUser
-        dataSource.password = dbPass
+        hikariConfig.jdbcUrl = jdbcUrl
+        hikariConfig.username = dbUser
+        hikariConfig.password = dbPass
+
+        val dataSource = HikariDataSource(hikariConfig)
+
         Class.forName("org.postgresql.Driver")
         val connect = dataSource.connection
         val mutableList = mutableListOf<Blog>()
@@ -43,9 +46,11 @@ class Database {
     }
 
     fun addBlog(blog: Blog) {
-        dataSource.jdbcUrl = jdbcUrl
-        dataSource.username = dbUser
-        dataSource.password = dbPass
+        hikariConfig.jdbcUrl = jdbcUrl
+        hikariConfig.username = dbUser
+        hikariConfig.password = dbPass
+
+        val dataSource = HikariDataSource(hikariConfig)
         Class.forName("org.postgresql.Driver")
         val connect = dataSource.connection
         try {
@@ -69,28 +74,28 @@ fun initDatabase(ctx: InitApiContext) {
     ctx.data.add(Database())
 }
 
-fun main() {
-    val jdbcUrl = System.getenv("JDBC_URL")
-    val dbPass = System.getenv("DB_PASS")
-    val dbUser = System.getenv("DB_USER")
-    val connect = DriverManager.getConnection(jdbcUrl, dbUser, dbPass)
-    val mutableList = mutableListOf<Blog>()
-    try {
-        val st = connect.createStatement()
-        val rs = st?.executeQuery("SELECT * FROM Blogs")
-        while (rs?.next() == true) {
-            println(rs.getString("content"))
-            mutableList.add(
-                Blog(
-                    content = rs.getString("content") ?: "",
-                    id = rs.getString("id") ?: ""
-                )
-            )
-        }
-        st?.close()
-        rs?.close()
-    } catch (e: SQLException) {
-        println(e.message)
-    }
-    println(mutableList)
-}
+//fun main() {
+//    val jdbcUrl = System.getenv("JDBC_URL")
+//    val dbPass = System.getenv("DB_PASS")
+//    val dbUser = System.getenv("DB_USER")
+//    val connect = DriverManager.getConnection(jdbcUrl, dbUser, dbPass)
+//    val mutableList = mutableListOf<Blog>()
+//    try {
+//        val st = connect.createStatement()
+//        val rs = st?.executeQuery("SELECT * FROM Blogs")
+//        while (rs?.next() == true) {
+//            println(rs.getString("content"))
+//            mutableList.add(
+//                Blog(
+//                    content = rs.getString("content") ?: "",
+//                    id = rs.getString("id") ?: ""
+//                )
+//            )
+//        }
+//        st?.close()
+//        rs?.close()
+//    } catch (e: SQLException) {
+//        println(e.message)
+//    }
+//    println(mutableList)
+//}
