@@ -65,6 +65,8 @@ class Database {
             prepareStatement?.setString(2, UUID.randomUUID().toString())
 
             prepareStatement?.executeUpdate()
+
+            prepareStatement?.close()
         } catch (e: SQLException) {
             println(e.message)
         }

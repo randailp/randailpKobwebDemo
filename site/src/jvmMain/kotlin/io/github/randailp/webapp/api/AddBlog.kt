@@ -7,17 +7,19 @@ import com.varabyte.kobweb.api.data.getValue
 import com.varabyte.kobweb.api.http.HttpMethod
 import com.varabyte.kobweb.api.http.readBodyText
 import io.github.randailp.webapp.api.db.Database
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
 
 @Api
 fun addBlog(ctx: ApiContext) {
     if (ctx.req.method != HttpMethod.POST) return
 
-    val blogContent = ctx.req.readBodyText()
+    val blogContent = ctx.req.readBodyText()?.let { Json.parseToJsonElement(it) }
 
     blogContent?.let { content ->
         ctx.data.getValue<Database>().addBlog(
             BlogPostBody(
-                content = content
+                content = content.jsonObject.getValue("content").toString()
             )
         )
     }
