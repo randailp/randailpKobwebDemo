@@ -20,8 +20,8 @@ fun BlogApiResponse.parseAsString(): String{
             ""
         }
         is BlogApiResponse.Success -> {
-            this.data.joinToString {
-                it.content + "\n"
+            this.data.joinToString(separator = "\n") {
+                it.content
             }
         }
         is BlogApiResponse.Error -> {

@@ -17,10 +17,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.jetbrains.compose.web.attributes.InputType
-import org.jetbrains.compose.web.dom.Button
-import org.jetbrains.compose.web.dom.Input
-import org.jetbrains.compose.web.dom.P
-import org.jetbrains.compose.web.dom.Text
+import org.jetbrains.compose.web.dom.*
 import parseAsString
 
 @Page
@@ -34,7 +31,10 @@ fun BlogsPage() {
                 apiResponseState = fetchBlogs().parseAsString()
             }
             P {
-                Text(value = apiResponseState)
+                apiResponseState.split("\n").forEach {
+                    Text(value = it)
+                    Br()
+                }
             }
             Button(attrs = Modifier.onClick {
                 ctx.router.navigateTo("/blogs/make-blog")
