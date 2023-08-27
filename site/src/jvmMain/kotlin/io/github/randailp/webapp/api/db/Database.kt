@@ -8,6 +8,7 @@ import com.varabyte.kobweb.api.init.InitApiContext
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.postgresql.Driver
+import java.sql.Connection
 import java.sql.SQLException
 import java.util.*
 
@@ -19,14 +20,20 @@ class Database {
     private val dbUser: String = System.getenv("DB_USER")
 
     private val hikariConfig = HikariConfig()
-    fun getBlogs(): List<Blog> {
+
+    private val connectionPool = buildConnectionPool()
+    private fun buildConnectionPool(): Connection{
         hikariConfig.jdbcUrl = jdbcUrl
         hikariConfig.username = dbUser
         hikariConfig.password = dbPass
         hikariConfig.setDriverClassName(Driver::class.java.getName())
 
         val dataSource = HikariDataSource(hikariConfig)
-        val connect = dataSource.connection
+        return dataSource.connection
+    }
+
+    fun getBlogs(): List<Blog> {
+        val connect = connectionPool
         val mutableList = mutableListOf<Blog>()
         try {
             val st = connect.createStatement()
@@ -48,13 +55,7 @@ class Database {
     }
 
     fun addBlog(blogPostBody: BlogPostBody) {
-        hikariConfig.jdbcUrl = jdbcUrl
-        hikariConfig.username = dbUser
-        hikariConfig.password = dbPass
-        hikariConfig.setDriverClassName(Driver::class.java.getName())
-
-        val dataSource = HikariDataSource(hikariConfig)
-        val connect = dataSource.connection
+        val connect = connectionPool
         try {
             val insertSQL = "INSERT INTO Blogs" +
                     " (content, id) VALUES " +
