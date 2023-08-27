@@ -83,6 +83,6 @@ private suspend fun postBlog(
     content: String
 ): BlogApiResponse {
     val blogPostBodyByteArray = Json.encodeToString(BlogPostBody(content = content)).encodeToByteArray()
-    val results = window.api.tryPost(apiPath = "postblog", body = blogPostBodyByteArray)?.decodeToString()
+    val results = window.api.tryPost(apiPath = "addblog", body = blogPostBodyByteArray)?.decodeToString()
     return Json.decodeFromString(string = results.toString())
 }
