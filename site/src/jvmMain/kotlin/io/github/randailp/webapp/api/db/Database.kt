@@ -9,6 +9,7 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.postgresql.Driver
 import java.sql.Connection
+import java.sql.DriverManager
 import java.sql.SQLException
 import java.util.*
 
@@ -41,8 +42,9 @@ class Database {
             while (rs?.next() == true) {
                 mutableList.add(
                     Blog(
-                        content = rs.getString("content") ?: "",
-                        id = rs.getString("id") ?: ""
+                        content = rs.getString("content"),
+                        id = rs.getString("id"),
+                        postDate = rs.getString("postDate")
                     )
                 )
             }
@@ -58,12 +60,13 @@ class Database {
         val connect = connectionPool
         try {
             val insertSQL = "INSERT INTO Blogs" +
-                    " (content, id) VALUES " +
-                    " (?, ?);"
+                    " (content, id, postDate) VALUES " +
+                    " (?, ?, ?);"
             val prepareStatement = connect.prepareStatement(insertSQL)
 
             prepareStatement?.setString(1, blogPostBody.content)
             prepareStatement?.setString(2, UUID.randomUUID().toString())
+            prepareStatement?.setString(3, blogPostBody.postDate)
 
             prepareStatement?.executeUpdate()
 
@@ -87,13 +90,16 @@ fun initDatabase(ctx: InitApiContext) {
 //    val mutableList = mutableListOf<Blog>()
 //    try {
 //        val st = connect.createStatement()
-//        val rs = st?.executeQuery("SELECT * FROM Blogs")
+//        val alterSQL = "ALTER TABLE Blogs " +
+//                "ADD COLUMN postDate VARCHAR(255);"
+//        val rs = st?.executeQuery(alterSQL)
 //        while (rs?.next() == true) {
 //            println(rs.getString("content"))
 //            mutableList.add(
 //                Blog(
-//                    content = rs.getString("content") ?: "",
-//                    id = rs.getString("id") ?: ""
+//                    content = rs.getString("content"),
+//                    id = rs.getString("id"),
+//                    postDate = rs.getString("postDate")
 //                )
 //            )
 //        }

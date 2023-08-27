@@ -21,7 +21,7 @@ fun BlogApiResponse.parseAsString(): String{
         }
         is BlogApiResponse.Success -> {
             this.data.joinToString(separator = "\n") {
-                it.content
+                it.content + it.postDate
             }
         }
         is BlogApiResponse.Error -> {

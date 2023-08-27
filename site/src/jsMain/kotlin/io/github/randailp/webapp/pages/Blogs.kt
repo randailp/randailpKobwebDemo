@@ -10,6 +10,7 @@ import com.varabyte.kobweb.compose.ui.modifiers.onClick
 import com.varabyte.kobweb.compose.ui.toAttrs
 import com.varabyte.kobweb.core.Page
 import com.varabyte.kobweb.core.rememberPageContext
+import com.varabyte.kobweb.navigation.UpdateHistoryMode
 import com.varabyte.kobweb.silk.components.text.SpanText
 import io.github.randailp.webapp.components.layouts.PageLayout
 import kotlinx.browser.window
@@ -64,7 +65,7 @@ fun MakeBlogPage(){
                 scope.launch{
                     val apiResponse = postBlog(inputText)
                     if(apiResponse is BlogApiResponse.Success){
-                        ctx.router.navigateTo("/blogs")
+                        ctx.router.navigateTo("/blogs", updateHistoryMode = UpdateHistoryMode.PUSH)
                     }
                 }
             }.toAttrs()) {

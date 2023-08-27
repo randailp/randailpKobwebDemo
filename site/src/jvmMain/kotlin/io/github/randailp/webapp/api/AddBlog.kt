@@ -9,6 +9,8 @@ import com.varabyte.kobweb.api.http.readBodyText
 import io.github.randailp.webapp.api.db.Database
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Api
 fun addBlog(ctx: ApiContext) {
@@ -19,7 +21,8 @@ fun addBlog(ctx: ApiContext) {
     blogContent?.let { content ->
         ctx.data.getValue<Database>().addBlog(
             BlogPostBody(
-                content = content.jsonObject.getValue("content").toString()
+                content = content.jsonObject.getValue("content").toString(),
+                postDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
             )
         )
     }
