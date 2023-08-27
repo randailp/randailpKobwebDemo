@@ -1,6 +1,7 @@
 package io.github.randailp.webapp.api.db
 
 import Blog
+import BlogPostBody
 import com.varabyte.kobweb.api.data.add
 import com.varabyte.kobweb.api.init.InitApi
 import com.varabyte.kobweb.api.init.InitApiContext
@@ -8,6 +9,7 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.postgresql.Driver
 import java.sql.SQLException
+import java.util.*
 
 
 class Database {
@@ -45,7 +47,7 @@ class Database {
         return mutableList
     }
 
-    fun addBlog(blog: Blog) {
+    fun addBlog(blogPostBody: BlogPostBody) {
         hikariConfig.jdbcUrl = jdbcUrl
         hikariConfig.username = dbUser
         hikariConfig.password = dbPass
@@ -54,13 +56,13 @@ class Database {
         val dataSource = HikariDataSource(hikariConfig)
         val connect = dataSource.connection
         try {
-            val updateSQL = "UPDATE Blogs " +
-                    "SET content = ${blog.content} " +
-                    "WHERE id = ${blog.id}"
-            val prepareStatement = connect.prepareStatement(updateSQL)
+            val insertSQL = "INSERT INTO Blogs" +
+                    " (content, id) VALUES " +
+                    " (?, ?);"
+            val prepareStatement = connect.prepareStatement(insertSQL)
 
-            prepareStatement?.setString(1, blog.content)
-            prepareStatement?.setString(2, blog.id)
+            prepareStatement?.setString(1, blogPostBody.content)
+            prepareStatement?.setString(2, UUID.randomUUID().toString())
 
             prepareStatement?.executeUpdate()
         } catch (e: SQLException) {
@@ -98,4 +100,16 @@ fun initDatabase(ctx: InitApiContext) {
 //        println(e.message)
 //    }
 //    println(mutableList)
+//}
+
+//fun main(){
+//    val updateSQL = "INSERT INTO Blogs" +
+//            " (content, id) VALUES " +
+//            " (?, ?);"
+//    val prepareStatement = connect.prepareStatement(updateSQL)
+//
+//    prepareStatement?.setString(1, "hello")
+//    prepareStatement?.setString(2, "1")
+//
+//    prepareStatement?.executeUpdate()
 //}
