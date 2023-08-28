@@ -31,3 +31,21 @@ fun BlogApiResponse.parseAsString(): String {
         }
     }
 }
+
+fun BlogApiResponse.getTitle(): String {
+    return when (this) {
+        is BlogApiResponse.Idle -> {
+            ""
+        }
+
+        is BlogApiResponse.Success -> {
+            this.data.joinToString(separator ="\n"){
+                it.title.toString().removeSurrounding("\"")
+            }
+        }
+
+        is BlogApiResponse.Error -> {
+            this.errorMessage
+        }
+    }
+}

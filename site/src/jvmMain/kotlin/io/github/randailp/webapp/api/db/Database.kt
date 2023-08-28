@@ -9,7 +9,6 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.postgresql.Driver
 import java.sql.Connection
-import java.sql.DriverManager
 import java.sql.SQLException
 import java.util.*
 
@@ -44,7 +43,8 @@ class Database {
                     Blog(
                         content = rs.getString("content"),
                         id = rs.getString("id"),
-                        postDate = rs.getString("postDate")
+                        postDate = rs.getString("postDate"),
+                        title = rs.getString("title")
                     )
                 )
             }
@@ -60,13 +60,14 @@ class Database {
         val connect = connectionPool
         try {
             val insertSQL = "INSERT INTO Blogs" +
-                    " (content, id, postDate) VALUES " +
-                    " (?, ?, ?);"
+                    " (content, id, postDate, title) VALUES " +
+                    " (?, ?, ?, ?);"
             val prepareStatement = connect.prepareStatement(insertSQL)
 
             prepareStatement?.setString(1, blogPostBody.content)
             prepareStatement?.setString(2, UUID.randomUUID().toString())
             prepareStatement?.setString(3, blogPostBody.postDate)
+            prepareStatement?.setString(4, blogPostBody.title)
 
             prepareStatement?.executeUpdate()
 
@@ -88,27 +89,18 @@ fun initDatabase(ctx: InitApiContext) {
 //    val dbUser = System.getenv("DB_USER")
 //    val connect = DriverManager.getConnection(jdbcUrl, dbUser, dbPass)
 //    val mutableList = mutableListOf<Blog>()
-//    try {
-//        val st = connect.createStatement()
-//        val alterSQL = "ALTER TABLE Blogs " +
-//                "ADD COLUMN postDate VARCHAR(255);"
-//        val rs = st?.executeQuery(alterSQL)
-//        while (rs?.next() == true) {
-//            println(rs.getString("content"))
-//            mutableList.add(
-//                Blog(
-//                    content = rs.getString("content"),
-//                    id = rs.getString("id"),
-//                    postDate = rs.getString("postDate")
-//                )
-//            )
+//        try {
+//            val insertSQL = "ALTER TABLE Blogs" +
+//                    " ADD COLUMN title VARCHAR(255)"
+//            val prepareStatement = connect.prepareStatement(insertSQL)
+//
+//            prepareStatement?.execute()
+//
+//            prepareStatement?.close()
+//        } catch (e: SQLException) {
+//            println(e.message)
 //        }
-//        st?.close()
-//        rs?.close()
-//    } catch (e: SQLException) {
-//        println(e.message)
-//    }
-//    println(mutableList)
+//        println(mutableList)
 //}
 
 //fun main(){

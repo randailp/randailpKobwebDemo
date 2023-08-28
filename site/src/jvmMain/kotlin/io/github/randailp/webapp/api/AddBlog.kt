@@ -21,7 +21,8 @@ fun addBlog(ctx: ApiContext) {
         ctx.data.getValue<Database>().addBlog(
             BlogPostBody(
                 content = content.jsonObject.getValue("content").toString(),
-                postDate = LocalDate.now().toString()
+                postDate = LocalDate.now().toString(),
+                title = content.jsonObject.getValue("title").toString()
             )
         )
     }
