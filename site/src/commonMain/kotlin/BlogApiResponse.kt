@@ -14,16 +14,18 @@ sealed class BlogApiResponse {
     data class Error(val errorMessage: String): BlogApiResponse()
 }
 
-fun BlogApiResponse.parseAsString(): String{
-    return when(this){
+fun BlogApiResponse.parseAsString(): String {
+    return when (this) {
         is BlogApiResponse.Idle -> {
             ""
         }
+
         is BlogApiResponse.Success -> {
             this.data.joinToString(separator = "\n") {
-                it.content + it.postDate
+                it.content + " - ${it.postDate}"
             }
         }
+
         is BlogApiResponse.Error -> {
             this.errorMessage
         }
