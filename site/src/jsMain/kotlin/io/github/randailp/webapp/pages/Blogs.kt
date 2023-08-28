@@ -5,40 +5,43 @@ import BlogApiResponse
 import BlogPostBody
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.browser.api
-import com.varabyte.kobweb.compose.css.*
+import com.varabyte.kobweb.compose.css.Resize
+import com.varabyte.kobweb.compose.css.ScrollBehavior
+import com.varabyte.kobweb.compose.css.resize
 import com.varabyte.kobweb.compose.foundation.layout.Column
 import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
+import com.varabyte.kobweb.compose.ui.modifiers.scrollBehavior
 import com.varabyte.kobweb.compose.ui.toAttrs
 import com.varabyte.kobweb.core.Page
 import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.navigation.Link
 import com.varabyte.kobweb.silk.components.text.SpanText
-import getTitle
 import io.github.randailp.webapp.components.layouts.PageLayout
 import kotlinx.browser.window
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.jetbrains.compose.web.attributes.*
+import org.jetbrains.compose.web.attributes.InputType
+import org.jetbrains.compose.web.attributes.cols
+import org.jetbrains.compose.web.attributes.placeholder
+import org.jetbrains.compose.web.attributes.rows
 import org.jetbrains.compose.web.dom.*
 
 @Page
 @Composable
 fun BlogsPage() {
     val ctx = rememberPageContext()
-    var apiResponseState by remember { mutableStateOf("") }
     var blogObjectState by remember { mutableStateOf(listOf<Blog>()) }
     LaunchedEffect(Unit) {
-        apiResponseState = fetchBlogs().getTitle()
         blogObjectState = (fetchBlogs() as BlogApiResponse.Success).data
     }
     PageLayout(title = "BLOGS") {
-        Column {
+        Column(modifier = Modifier.scrollBehavior(ScrollBehavior.Auto)) {
             H2{
                 blogObjectState.forEach {
                     Link(
-                        text ="${it.title}",
+                        text = it.title.toString().removeSurrounding("\""),
                         path = "/blogs/${it.id}"
                         )
                     Br()
