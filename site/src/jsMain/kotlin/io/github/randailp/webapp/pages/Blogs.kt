@@ -3,6 +3,7 @@ package io.github.randailp.webapp.pages
 import Blog
 import BlogApiResponse
 import BlogPostBody
+import BlogPutBody
 import androidx.compose.runtime.*
 import com.varabyte.kobweb.browser.api
 import com.varabyte.kobweb.compose.css.Resize
@@ -70,8 +71,71 @@ fun BlogDetailsPage(){
         } ?: Blog()
     }
     PageLayout(title = currentBlogState.title?.removeSurrounding("\"") ?: ""){
-        H2{
+        H3{
+            SpanText(text = "posted on ${currentBlogState.postDate?.removeSurrounding("\"") ?: ""}")
+        }
+        P{
             SpanText(text = currentBlogState.content?.removeSurrounding("\"") ?: "")
+        }
+        Button(attrs = Modifier.onClick {
+            ctx.router.navigateTo("/blogs/edit-blog/${blogId}")
+        }.toAttrs()) {
+            SpanText("edit post")
+        }
+    }
+}
+
+@Page("/blogs/edit-blog/{id}")
+@Composable
+fun EditBlogPage() {
+    val ctx = rememberPageContext()
+    val scope = rememberCoroutineScope()
+
+    val blogId = ctx.route.params.getValue("id")
+    var blogObjectState by remember { mutableStateOf(listOf<Blog>()) }
+    var currentBlogState by remember { mutableStateOf(Blog()) }
+    LaunchedEffect(Unit){
+        blogObjectState = (fetchBlogById(blogId) as BlogApiResponse.Success).data
+        currentBlogState = blogObjectState.find {
+            it.id == blogId
+        } ?: Blog()
+    }
+    var bodyText by remember { mutableStateOf(currentBlogState.content) }
+    var titleText by remember { mutableStateOf(currentBlogState.title) }
+    PageLayout(title = "EDIT BLOG POST") {
+        Column {
+            Input(
+                type = InputType.Text,
+                attrs = Modifier.toAttrs(finalHandler = {
+                    this.onChange {
+                        titleText = it.value
+                    }
+                    this.placeholder("Enter blog title here")
+                })
+            )
+            TextArea(
+                attrs = Modifier.toAttrs(finalHandler = {
+                    this.rows(5)
+                    this.cols(40)
+                    this.style {
+                        this.resize(Resize.None)
+                    }
+                    this.onChange {
+                        bodyText = it.value
+                    }
+                    this.placeholder("Write your thoughts here")
+                })
+            )
+            Button(attrs = Modifier.onClick {
+                scope.launch {
+                    if (bodyText?.isNotEmpty() == true && titleText?.isNotEmpty() == true) {
+                        updateBlog(bodyText ?: "", titleText ?: "", id = blogId)
+                    }
+                }
+                window.location.replace("/blogs/$blogId")
+            }.toAttrs()) {
+                SpanText("update post")
+            }
         }
     }
 }
@@ -138,5 +202,15 @@ private suspend fun postBlog(
 ): BlogApiResponse {
     val blogPostBodyByteArray = Json.encodeToString(BlogPostBody(content = content, title = title)).encodeToByteArray()
     val results = window.api.tryPost(apiPath = "addblog", body = blogPostBodyByteArray)?.decodeToString()
+    return Json.decodeFromString(string = results.toString())
+}
+
+private suspend fun updateBlog(
+    content: String,
+    title: String,
+    id: String
+): BlogApiResponse {
+    val blogPutBodyByteArray = Json.encodeToString(BlogPutBody(newContent = content, newTitle = title, id = id)).encodeToByteArray()
+    val results = window.api.tryPut(apiPath = "updateblog", body = blogPutBodyByteArray)?.decodeToString()
     return Json.decodeFromString(string = results.toString())
 }
